@@ -10,7 +10,13 @@ from sklearn.model_selection import train_test_split
 from gensim.models.keyedvectors import KeyedVectors
 from cleaning import load_body_sentence
 ###
-combined_dataframe = pd.read_hdf("prs_test_2.h5")
+
+F_H5 = "prs_comp_tst.h5"
+F_PKL = "test_feature.pkl" # for train use train_feature.pkl
+T_PKL = "test_tfidf.pkl" #for train use train_tfidf.pkl
+
+dataframe = "O_H5"
+combined_dataframe = pd.read_hdf(dataframe)
 ###combined_dataframe = pd.read_hdf("prs_trn_2.h5")
 print(combined_dataframe, combined_dataframe.info())
 nlp = spacy.load('en_core_web_lg')
@@ -167,8 +173,8 @@ def sentence2vector(sentence, word2vec):
         vector /= np.linalg.norm(vector)
     return vector
 #sentence2vector("its a nice day", word2vec)
-file = "test_bodies.csv"
-bs = load_body_sentence(file)
+#file = "test_bodies.csv"
+bs = load_body_sentence()
 def hb_similarities(title, body_sentences, word2vec,word2tfidf):
     max_overlap, max_overlap_cnt = 0, 0
     title_vector = sentence2vector(title, word2vec)
@@ -221,9 +227,10 @@ def features():
             print(ct)
     return all_features
 ft = features()
-output = open('test_feature.pkl', 'wb')
+
+output_feature = open('test_feature.pkl', 'wb')
 pickle.dump(ft, output)
 output.close()
-output = open('test_tfidf.pkl', 'wb')
+output_tfidf = open('test_tfidf.pkl', 'wb')
 pickle.dump(word2tfidf, output)
 output.close()

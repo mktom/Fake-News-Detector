@@ -23,10 +23,15 @@ from sklearn.linear_model import LogisticRegression
 ##from sklearn.preprocessing import normalize
 ##from sklearn.metrics.pairwise import cosine_similarity
 #_____________________
+
+TRAIN_H5 = "prs_trn_2.h5"
+F_H5 = "prs_comp_tst.h5"
+F_PKL = 'test_feature.pkl'
+
 f = open('feature.pkl', 'rb')
 trainX_all = pickle.load(f)
 f.close()
-combined_dataframe = pd.read_hdf("prs_trn_2.h5")
+combined_dataframe = pd.read_hdf(TRAIN_H5)
 #combined_dataframe = pd.read_hdf("prs_test_2.h5")
 print(combined_dataframe, combined_dataframe.info())
 combined_dataframe['first']=combined_dataframe['Stance'].apply({'unrelated':1,'discuss':0,'agree':0,'disagree':0}.get)
@@ -230,13 +235,12 @@ def bi_percep():
 
 def train_and_test():
     result = pd.DataFrame()
-    f = open('test_feature.pkl', 'rb')
+    f = open(F_PKL, 'rb')
     textX_all = pickle.load(f)
     f.close()
     lr = RandomForestClassifier(n_estimators = 70,min_samples_split=100, min_samples_leaf=20,max_depth=8,max_features='sqrt',random_state=10)
-    #lr= LogisticRegression(C = 1.0,penalty = 'l2',solver = 'lbfgs')
     lr.fit(trainX_all,trainy_all)
-    y_pred_binary = lr.predict(textX_all)
+    y_pred_binary = lr.predict(testX_all)
     y_pred_binary = list((np.array(y_pred_binary)-1)*(-1))
     result['binary'] = y_pred_binary
     stage2 = result[result['binary']==1].index.tolist()
@@ -245,7 +249,7 @@ def train_and_test():
         textX.append(textX_all[i])
     gb = GradientBoostingClassifier(n_estimators=1000, learning_rate=0.1,min_samples_split=300,max_features='sqrt',subsample=0.8,random_state=10)
     gb.fit(trainX,trainY)
-    y_pred = list(gb.predict(textX))
+    y_pred = list(gb.predict(testX))
     Stance = {0:'unrelated',1:'discuss',2:'agree',3:'disagree'}
     pred = []
     for i in range(len(y_pred_binary)):
@@ -253,11 +257,11 @@ def train_and_test():
             pred.append('unrelated')
         else:
             pred.append(Stance[y_pred.pop(0)])
-    dataframe = pd.read_hdf("prs_comp_tst.h5")
+    dataframe = pd.read_hdf(F_H5)
     actual = list(dataframe['Stance'])
     report_score(actual,pred)
     return pred
-
+pred = train_and_test
 
     
 
