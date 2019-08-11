@@ -25,6 +25,7 @@ Spacy
 - Run the file
 
 ### Classification
+- download `feature.pkl` file and put it in the folder where the `classification.py` is.
 - Update `F_H5` value with the value we set above for `O_H5` above
 - Update `F_PKL` value with the value we set above for `F_PKL`
 - Run the file for the classification
@@ -32,3 +33,5 @@ Spacy
 
 #### Required Files are in google drive
 https://drive.google.com/drive/folders/1NiFtlfnxgLteDjlUsVKPJfGjQJD3dKq4?usp=sharing
+
+
