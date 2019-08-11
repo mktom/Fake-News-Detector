@@ -9,7 +9,7 @@ Qiqi Zhang (z5185698), Sudhan Maharjan (z5196539)
 
 Required libraries 
 Spacy
-`en_core_web_lg` package needed for spacy
+`en_core_web_lg` package is needed for spacy
 
 
 
@@ -17,11 +17,18 @@ Spacy
 - Update `F_STANCES, F_BODIES, O_H5, O_CSV` values in `pre_process_spacy.py`
 - Run the file
 
+- Update `file_name` to body file in `cleaning.py`
+
 ### Feature Extraction
 - Update `F_H5` with the value we set above for `O_H5`
+- Update `F_PKL` and `T_PKL` based on train and generated test features
+- Run the file
 
 ### Classification
-- Update `F_H5` value with the value we set above for `O_H5`
-#### Required Files 
+- Update `F_H5` value with the value we set above for `O_H5` above
+- Update `F_PKL` value with the value we set above for `F_PKL`
+- Run the file for the classification
 
+
+#### Required Files are in google drive
 https://drive.google.com/drive/folders/1NiFtlfnxgLteDjlUsVKPJfGjQJD3dKq4?usp=sharing
