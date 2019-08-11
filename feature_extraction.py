@@ -15,8 +15,8 @@ F_H5 = "prs_comp_tst.h5"
 F_PKL = "test_feature.pkl" # for train use train_feature.pkl
 T_PKL = "test_tfidf.pkl" #for train use train_tfidf.pkl
 
-dataframe = "O_H5"
-combined_dataframe = pd.read_hdf(dataframe)
+
+combined_dataframe = pd.read_hdf(F_H5)
 ###combined_dataframe = pd.read_hdf("prs_trn_2.h5")
 print(combined_dataframe, combined_dataframe.info())
 nlp = spacy.load('en_core_web_lg')
@@ -228,9 +228,9 @@ def features():
     return all_features
 ft = features()
 
-output_feature = open('test_feature.pkl', 'wb')
+output_feature = open(F_PKL, 'wb')
 pickle.dump(ft, output)
 output.close()
-output_tfidf = open('test_tfidf.pkl', 'wb')
+output_tfidf = open(T_PKL, 'wb')
 pickle.dump(word2tfidf, output)
 output.close()
