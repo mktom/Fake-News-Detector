@@ -10,8 +10,10 @@ from sklearn.metrics import classification_report
 from sklearn.model_selection import GridSearchCV
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import cross_val_score
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import GradientBoostingClassifier
+from score import report_score
+from sklearn.linear_model import LogisticRegression
 #_____________________
 ##from pandas.plotting import scatter_matrix
 ##import matplotlib.pyplot as plt
@@ -39,7 +41,7 @@ trainY = list((stage2_frame.values[:,5]).astype('int64'))
 
 
 # trainX_all and trainy_all is for binary classification
-# trainX and trainY is for binary classification
+# trainX and trainY is for triple classification
 
 
 #method1: 2 classification for all 4 class
@@ -78,25 +80,37 @@ def method1():
     agree_frame["agreeY"] = agree_frame['Stance'].apply({'agree':1,'disagree':0}.get)
     agreeTrainY = (agree_frame.values[:,6]).astype('int64')
     agree_classifier = train_relatedness_classifier(agreeTrainX, agreeTrainY)
-    return relatedness_classifier,discuss_classifier
-##def prediction1():
-##    xg_test = xgb.DMatrix(testX)
-##    relatedness_pred = relatedness_classifier.predict(xg_test);
-##    discuss_pred = discuss_classifier.predict(xg_test)
-##    agree_pred = agree_classifier.predict(xg_test)
-##
-##    ret, scores = [], []
-##    for (pred_relate, pred_discuss, pred_agree) in zip(relatedness_pred, discuss_pred, agree_pred):
-##        scores.append((pred_relate, pred_discuss, pred_agree))
-##        if pred_relate >= 0.5:
-##            ret.append('unrelated')
-##        elif pred_discuss >= 0.5:
-##            ret.append('discuss')
-##        elif pred_agree >= 0.5:
-##            ret.append('agree')
-##        else:
-##            ret.append('disagree')
-##    return ret,scores
+    return relatedness_classifier,discuss_classifier,agree_classifier
+def prediction1():
+    f = open('test_feature.pkl', 'rb')
+    textX = pickle.load(f)
+    f.close()
+    f = open('relatedness_classifier.pkl', 'rb')
+    relatedness_classifier = pickle.load(f)
+    f.close()
+    f = open('discuss_classifier.pkl', 'rb')
+    discuss_classifier = pickle.load(f)
+    f.close()
+    f = open('agree_classifier.pkl', 'rb')
+    agree_classifier = pickle.load(f)
+    f.close()
+    xg_test = xgb.DMatrix(textX)
+    relatedness_pred = relatedness_classifier.predict(xg_test);
+    discuss_pred = discuss_classifier.predict(xg_test)
+    agree_pred = agree_classifier.predict(xg_test)
+
+    ret, scores = [], []
+    for (pred_relate, pred_discuss, pred_agree) in zip(relatedness_pred, discuss_pred, agree_pred):
+        scores.append((pred_relate, pred_discuss, pred_agree))
+        if pred_relate >= 0.5:
+            ret.append('unrelated')
+        elif pred_discuss >= 0.5:
+            ret.append('discuss')
+        elif pred_agree >= 0.5:
+            ret.append('agree')
+        else:
+            ret.append('disagree')
+    return relatedness_pred,discuss_pred,agree_pred,ret,scores
 
 #method2:  2 classification + 3 classification
 def binary():
@@ -165,25 +179,45 @@ def binary():
     print(metric_mean.sort_values(ascending=False))
     return metric_all
 #————————————————————————————————————————
+def triple():
+    metric_all2 = pd.DataFrame()
+    scoring = 'accuracy'
+    from sklearn.model_selection import KFold
+    kfold = KFold(n_splits=10, random_state=0)
+    lr= LogisticRegression(C = 1.0,penalty = 'l2',solver = 'lbfgs')
+    metric = cross_val_score(lr, trainX, trainY, cv=kfold, scoring=scoring)
+    metric.sort()
+    metric_all2['glm'] = metric[::-1]
+    dt = DecisionTreeClassifier(criterion="entropy",max_depth=12)
+    metric = cross_val_score(dt, trainX, trainY, cv=kfold, verbose = 1,scoring=scoring)
+    metric.sort()
+    metric_all2['dt'] = metric[::-1]
+    X_train1, X_test1, y_train1, y_test1 = train_test_split(trainX,trainY, test_size = 0.5, random_state = 0)
+    metric = cross_val_score(svc, X_train1, y_train1, cv=kfold, verbose = 1,scoring=scoring)
+    metric.sort()
+    metric_all2['svm'] = metric[::-1]
+    gnb = GaussianNB()
+    metric = cross_val_score(gnb, trainX, trainY, cv=kfold, verbose = 1,scoring=scoring)
+    metric.sort()
+    metric_all2['gnb'] = metric[::-1]
+    lda = LinearDiscriminantAnalysis(solver='lsqr', shrinkage=None, priors=None)
+    metric = cross_val_score(lda, trainX, trainY, cv=kfold, verbose = 1,scoring=scoring)
+    metric.sort()
+    metric_all2['LDA'] = metric[::-1]
+    RF = RandomForestClassifier(n_estimators=100, criterion='gini', random_state=0)
+    metric = cross_val_score(RF, trainX, trainY, cv=kfold, verbose = 1,scoring=scoring)
+    metric.sort()
+    metric_all2['RF100'] = metric[::-1]
+    gb = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0,max_depth=1, random_state=0)
+    metric = cross_val_score(RF, trainX, trainY, cv=kfold, verbose = 1,scoring=scoring)
+    metric.sort()
+    metric_all2['gb'] = metric[::-1]
+    print(metric_all)
+    metric_mean = metric_all.mean()
+    print(metric_mean.sort_values(ascending=False))
+    return metric_all2
 
-metric_all2 = pd.DataFrame()
-scoring = 'accuracy'
-from sklearn.model_selection import KFold
-kfold = KFold(n_splits=10, random_state=0)
-lr= LogisticRegression(C = 1.0,penalty = 'l2',solver = 'lbfgs')
-metric = cross_val_score(lr, trainX, trainY, cv=kfold, scoring=scoring)
-metric.sort()
-metric_all2['glm'] = metric[::-1]
-dt = DecisionTreeClassifier(criterion="entropy",max_depth=12)
-metric = cross_val_score(dt, trainX, trainY, cv=kfold, verbose = 1,scoring=scoring)
-metric.sort()
-metric_all2['dt'] = metric[::-1]
 
-
-validation_size = 0.3
-seed = 0
-X_train1, X_test1, y_train1, y_test1 = train_test_split(trainX_all,trainy_all, \
-                                                    test_size = validation_size, random_state = seed)
 
 def bi_percep():
     ppn = Perceptron(eta0=0.1, random_state=0)
@@ -193,6 +227,38 @@ def bi_percep():
     print(acc1)
     return ppn
     #0.9806563500533618
-#Logistic Regression
+
+def train_and_test():
+    result = pd.DataFrame()
+    f = open('test_feature.pkl', 'rb')
+    textX_all = pickle.load(f)
+    f.close()
+    lr = RandomForestClassifier(n_estimators = 70,min_samples_split=100, min_samples_leaf=20,max_depth=8,max_features='sqrt',random_state=10)
+    #lr= LogisticRegression(C = 1.0,penalty = 'l2',solver = 'lbfgs')
+    lr.fit(trainX_all,trainy_all)
+    y_pred_binary = lr.predict(textX_all)
+    y_pred_binary = list((np.array(y_pred_binary)-1)*(-1))
+    result['binary'] = y_pred_binary
+    stage2 = result[result['binary']==1].index.tolist()
+    textX = []
+    for i in stage2:
+        textX.append(textX_all[i])
+    gb = GradientBoostingClassifier(n_estimators=1000, learning_rate=0.1,min_samples_split=300,max_features='sqrt',subsample=0.8,random_state=10)
+    gb.fit(trainX,trainY)
+    y_pred = list(gb.predict(textX))
+    Stance = {0:'unrelated',1:'discuss',2:'agree',3:'disagree'}
+    pred = []
+    for i in range(len(y_pred_binary)):
+        if y_pred_binary[i] == 0:
+            pred.append('unrelated')
+        else:
+            pred.append(Stance[y_pred.pop(0)])
+    dataframe = pd.read_hdf("prs_comp_tst.h5")
+    actual = list(dataframe['Stance'])
+    report_score(actual,pred)
+    return pred
+
+
+    
 
 
