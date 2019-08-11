@@ -3,8 +3,8 @@ import spacy
 import re
 import string
 from spacy.lang.en import stop_words
-file_name = 'competition_test_bodies.csv'
-def load_body_sentence(file):
+F_BODIES = 'competition_test_bodies.csv'
+def load_body_sentence(F_BODIES):
     nlp = spacy.load('en_core_web_lg')
     df=pd.read_csv(file)
     #df=pd.read_csv('test_bodies.csv')
