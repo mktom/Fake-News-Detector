@@ -17,11 +17,11 @@ Spacy
 - Update `F_STANCES, F_BODIES, O_H5, O_CSV` values in `pre_process_spacy.py`
 - Run the file
 
-- Update `file_name` to body file in `cleaning.py`
+- Update `F_BODIES` to the value from `F_BODIES` above
 
 ### Feature Extraction
 - Update `F_H5` with the value we set above for `O_H5`
-- Update `F_PKL` and `T_PKL` based on train and generated test features
+- Update `F_PKL` and `T_PKL` based on train and generated test features. This is just name of file generated
 - Run the file
 
 ### Classification
