@@ -259,9 +259,9 @@ def train_and_test2():
     from xgboost.sklearn import XGBClassifier
     xg = XGBClassifier(learning_rate=0.1, n_estimators=1000, max_depth=6,eta = 0.1,\
                              objective="binary:logistic", subsample=0.9, colsample_bytree=0.8)
-    xg.fit(np.array(trainX), np.array(trainY))
-    testX_all = np.array(testX_all).reshape(-1, 1)
+    xg.fit(np.array(trainX_all), np.array(trainy_all))
     y_pred_binary = xg.predict(np.array(testX_all))
+  
     y_pred_binary = list((np.array(y_pred_binary)-1)*(-1))
     result['binary'] = y_pred_binary
     stage2 = result[result['binary']==1].index.tolist()
