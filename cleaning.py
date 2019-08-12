@@ -4,9 +4,9 @@ import re
 import string
 from spacy.lang.en import stop_words
 F_BODIES = 'competition_test_bodies.csv'
-def load_body_sentence(F_BODIES):
+def load_body_sentence():
     nlp = spacy.load('en_core_web_lg')
-    df=pd.read_csv(file)
+    df=pd.read_csv(F_BODIES)
     #df=pd.read_csv('test_bodies.csv')
     body_sentence = {}
     for row in df.iterrows():
