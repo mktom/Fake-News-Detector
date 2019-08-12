@@ -67,11 +67,11 @@ def train_relatedness_classifier(trainX, trainY):
     relatedness_classifier = xgb.train(param, xg_train, num_round)
     return relatedness_classifier
 def method1():
-    trainX = copy.deepcopy(trainX_all)
-    trainY = list((combined_dataframe.values[:,4]).astype('int64'))
-    relatedness_classifier = train_relatedness_classifier(trainX, trainY)
+    all_trainX = copy.deepcopy(trainX_all)
+    all_trainY = list((combined_dataframe.values[:,4]).astype('int64'))
+    relatedness_classifier = train_relatedness_classifier(all_trainX, all_trainY)
 
-    relatedTrainX = trainX3
+    relatedTrainX = trainX
     related_frame = combined_dataframe[combined_dataframe['first']==0]
     related_frame["discussY"] = related_frame['Stance'].apply({'discuss':1,'agree':0,'disagree':0}.get)
     relatedTrainY = list((related_frame.values[:,6]).astype('int64'))
