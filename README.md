@@ -3,8 +3,11 @@
 
 **Submitted By:**
 
-Jianan Yan (z5168722), Mark Thomas (z5194597),
-Qiqi Zhang (z5185698), Sudhan Maharjan (z5196539)
+Jianan Yan **(z5168722)**, Mark Thomas **(z5194597)**,
+Qiqi Zhang **(z5185698)**, Sudhan Maharjan **(z5196539)**
+
+
+
 
 
 Required libraries 
