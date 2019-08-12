@@ -187,7 +187,7 @@ def hb_similarities(title, body_sentences, word2vec,word2tfidf):
         max_overlap = max(max_overlap, cur_overlap)
         max_overlap_cnt = max(max_overlap_cnt, cur_overlap_cnt)
         similarity = 0
-        max_cos = -1
+        all_cos = []
         # for i in xrange(300):
         for i in range(300):
             similarity += title_vector[i] * sub_body_vector[i]
@@ -199,11 +199,10 @@ def hb_similarities(title, body_sentences, word2vec,word2tfidf):
                                                        * np.linalg.norm(title_vector))
         else:
             cos = 0
-        if cos > max_cos:
-            max_cos = cos
+        all_cos.append(cos)
         supports.append(similarity)
-        
-    features = [max_overlap, max_overlap_cnt, max(supports), min(supports),max_cos]
+    avg_cos = sum(all_cos)/len(all_cos)    
+    features = [max_overlap, max_overlap_cnt, max(supports), min(supports),avg_cos]
     for v in best_vector:
         features.append(v)
     for v in title_vector:
