@@ -236,7 +236,7 @@ def bi_percep():
 def train_and_test():
     result = pd.DataFrame()
     f = open(F_PKL, 'rb')
-    textX_all = pickle.load(f)
+    testX_all = pickle.load(f)
     f.close()
     lr = RandomForestClassifier(n_estimators = 70,min_samples_split=100, min_samples_leaf=20,max_depth=8,max_features='sqrt',random_state=10)
     lr.fit(trainX_all,trainy_all)
@@ -244,9 +244,9 @@ def train_and_test():
     y_pred_binary = list((np.array(y_pred_binary)-1)*(-1))
     result['binary'] = y_pred_binary
     stage2 = result[result['binary']==1].index.tolist()
-    textX = []
+    testX = []
     for i in stage2:
-        textX.append(textX_all[i])
+        textX.append(testX_all[i])
     gb = GradientBoostingClassifier(n_estimators=1000, learning_rate=0.1,min_samples_split=300,max_features='sqrt',subsample=0.8,random_state=10)
     gb.fit(trainX,trainY)
     y_pred = list(gb.predict(testX))
@@ -261,7 +261,7 @@ def train_and_test():
     actual = list(dataframe['Stance'])
     report_score(actual,pred)
     return pred
-pred = train_and_test
+pred = train_and_test()
 
     
 
