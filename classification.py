@@ -177,7 +177,16 @@ def triple():
     metric_mean = metric_all.mean()
     print(metric_mean.sort_values(ascending=False))
     return metric_all2
-
+def voting():
+    from sklearn.ensemble import VotingClassifier
+    dt = DecisionTreeClassifier(criterion="gini",max_depth=11)
+    lr= LogisticRegression(C = 1.0,penalty = 'l2',solver = 'lbfgs')
+    svc = SVC(C=1.0, kernel='rbf', gamma='auto')
+    lda = LinearDiscriminantAnalysis(solver='lsqr', shrinkage=None, priors=None)
+    clf = VotingClassifier(estimators=[('lr', rf_optimized), ('dt', svc_optimized), ('svm', xgb_optimized)], 
+                        voting='hard')
+    scores = cross_val_score(clf,trainX_all,trainy_all, cv=10, scoring='f1',verbose = 1)
+    return scores
 
 
 def bi_percep():
