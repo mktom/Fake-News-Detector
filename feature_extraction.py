@@ -183,7 +183,10 @@ def hb_similarities(title, body_sentences, word2vec,word2tfidf):
         similarity = sentence_similarity(title,sub_body)
         if similarity:
             support.append(similarity)
-    avg_cos = sum(support)/len(support)    
+    if len(support) != 0:
+        avg_cos = sum(support)/len(support)
+    else:
+        avg_cos = 0
     features = [max_overlap, max_overlap_cnt, max(support), min(support),avg_cos]
     return features
 word2tfidf = tfidf()
