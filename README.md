@@ -10,9 +10,15 @@ Qiqi Zhang **(z5185698)**, Sudhan Maharjan **(z5196539)**
 
 
 
-Required libraries 
-Spacy
+### Required libraries 
+list of required packages are in `requirements.txt`
+
+Install the packages: `pip install -r requirements.txt`
+
+Install Spacy language module
 `en_core_web_lg` package is needed for spacy
+
+`py -m spacy download en-core-web-lg`
 
 
 
