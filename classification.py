@@ -30,7 +30,7 @@ TRAIN_H5 = "prs_trn_2.h5"
 F_H5 = "prs_comp_tst.h5"
 F_PKL = 'test_feature.pkl'
 
-f = open('feature.pkl', 'rb')
+f = open('feature_new.pkl', 'rb')
 trainX_all = pickle.load(f)
 f.close()
 combined_dataframe = pd.read_hdf(TRAIN_H5)
