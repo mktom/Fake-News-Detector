@@ -40,6 +40,8 @@ Install Spacy language module
 - Run the file for the classification
 
 
+* `agree_classifier.pkl`, `discuss_classifier.pkl`, `relatedness_classifier.pkl` should be in the same location as the program.
+
 #### Required Files are in google drive
 https://drive.google.com/drive/folders/1NiFtlfnxgLteDjlUsVKPJfGjQJD3dKq4?usp=sharing
 
