@@ -28,7 +28,7 @@ from sklearn.linear_model import LogisticRegression
 
 TRAIN_H5 = "prs_trn_2.h5"
 F_H5 = "prs_comp_tst.h5"
-F_PKL = 'test_feature.pkl'
+F_PKL = 'test_feature_new.pkl'
 
 f = open('feature_new.pkl', 'rb')
 trainX_all = pickle.load(f)
