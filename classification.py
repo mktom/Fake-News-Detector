@@ -250,5 +250,38 @@ def plot_err_iter():
     
     plt.show()
     
-
+def train_and_test2():
+    result = pd.DataFrame()
+    f = open(F_PKL, 'rb')
+    testX_all = pickle.load(f)
+    f.close()
+    
+    from xgboost.sklearn import XGBClassifier
+    xg = XGBClassifier(learning_rate=0.1, n_estimators=1000, max_depth=6,eta = 0.1,\
+                             objective="binary:logistic", subsample=0.9, colsample_bytree=0.8)
+    xg.fit(np.array(trainX), np.array(trainY))
+    testX_all = np.array(testX_all).reshape(-1, 1)
+    y_pred_binary = xg.predict(np.array(testX_all))
+    y_pred_binary = list((np.array(y_pred_binary)-1)*(-1))
+    result['binary'] = y_pred_binary
+    stage2 = result[result['binary']==1].index.tolist()
+    testX = []
+    for i in stage2:
+        testX.append(testX_all[i])
+    gb = GradientBoostingClassifier(n_estimators=1000,validation_fraction = 0.2,\
+                                    tol = 0.01,learning_rate=0.1,min_samples_split=300,max_features='sqrt',subsample=0.8,random_state=10)
+    gb.fit(trainX,trainY)
+    y_pred = list(gb.predict(testX))
+    Stance = {0:'unrelated',1:'discuss',2:'agree',3:'disagree'}
+    pred = []
+    for i in range(len(y_pred_binary)):
+        if y_pred_binary[i] == 0:
+            pred.append('unrelated')
+        else:
+            pred.append(Stance[y_pred.pop(0)])
+    dataframe = pd.read_hdf(F_H5)
+    actual = list(dataframe['Stance'])
+    #actual = list(combined_dataframe['Stance'])
+    report_score(actual,pred)
+    return pred
 
