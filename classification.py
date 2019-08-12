@@ -15,6 +15,7 @@ from sklearn.ensemble import GradientBoostingClassifier
 from score import report_score
 from sklearn.linear_model import LogisticRegression
 from xgboost.sklearn import XGBClassifier
+
 #_____________________
 ##from pandas.plotting import scatter_matrix
 ##import matplotlib.pyplot as plt
@@ -192,18 +193,20 @@ def train_and_test():
     f = open(F_PKL, 'rb')
     testX_all = pickle.load(f)
     f.close()
-    lr = RandomForestClassifier(n_estimators = 70,min_samples_split=100, min_samples_leaf=20,max_depth=8,max_features='sqrt',random_state=10)
-    lr.fit(trainX_all,trainy_all)
-    y_pred_binary = lr.predict(testX_all)
+    xg = XGBClassifier(learning_rate=0.1, n_estimators=1000, max_depth=6,eta = 0.1,\
+                             objective="binary:logistic", subsample=0.9, colsample_bytree=0.8)
+    xg.fit(trainX_all,trainy_all)
+    y_pred_binary = xg.predict(testX_all)
     y_pred_binary = list((np.array(y_pred_binary)-1)*(-1))
     result['binary'] = y_pred_binary
     stage2 = result[result['binary']==1].index.tolist()
     testX = []
     for i in stage2:
         testX.append(testX_all[i])
-    gb = GradientBoostingClassifier(n_estimators=1000, learning_rate=0.1,min_samples_split=300,max_features='sqrt',subsample=0.8,random_state=10)
-    gb.fit(trainX,trainY)
-    y_pred = list(gb.predict(testX))
+    gb = GradientBoostingClassifier(n_estimators=1000,validation_fraction = 0.2,\
+                                    tol = 0.01,learning_rate=0.1,min_samples_split=300,max_features='sqrt',subsample=0.8,random_state=10)
+    gb.fit(np.array(trainX),np.array(trainY))
+    y_pred = list(gb.predict(np.array(testX)))
     Stance = {0:'unrelated',1:'discuss',2:'agree',3:'disagree'}
     pred = []
     for i in range(len(y_pred_binary)):
@@ -213,6 +216,7 @@ def train_and_test():
             pred.append(Stance[y_pred.pop(0)])
     dataframe = pd.read_hdf(F_H5)
     actual = list(dataframe['Stance'])
+    #actual = list(combined_dataframe['Stance'])
     report_score(actual,pred)
     return pred
 pred = train_and_test()
