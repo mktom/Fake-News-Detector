@@ -202,7 +202,7 @@ def train_and_test():
     testX = []
     for i in stage2:
         testX.append(testX_all[i])
-    gb = GradientBoostingClassifier(n_estimators=900, learning_rate=0.1,min_samples_split=300,max_features='sqrt',subsample=0.8,random_state=10)
+    gb = GradientBoostingClassifier(n_estimators=800, learning_rate=0.1,min_samples_split=300,max_features='sqrt',subsample=0.8,random_state=10)
     gb.fit(trainX,trainY)
     y_pred = list(gb.predict(testX))
     Stance = {0:'unrelated',1:'discuss',2:'agree',3:'disagree'}
