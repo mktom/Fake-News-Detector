@@ -2,6 +2,8 @@ import pickle
 import pandas as pd
 import numpy as np
 import copy
+
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import Perceptron
@@ -17,6 +19,8 @@ from sklearn.linear_model import LogisticRegression
 from xgboost.sklearn import XGBClassifier
 from sklearn.metrics import accuracy_score
 import matplotlib.pyplot as plt
+from sklearn.naive_bayes import GaussianNB
+
 #_____________________
 ##from pandas.plotting import scatter_matrix
 ##import matplotlib.pyplot as plt
@@ -104,7 +108,6 @@ def binary():
     #metric.sort()
     metric_all['DecisionTree'] = metric[::-1]
 
-    from sklearn.naive_bayes import GaussianNB
     gnb = GaussianNB()
     metric = cross_val_score(gnb, trainX_all,trainy_all, cv=10, scoring='f1',verbose = 1)
     #[Parallel(n_jobs=1)]: Using backend SequentialBackend with 1 concurrent workers.
@@ -173,17 +176,18 @@ def triple():
     metric = cross_val_score(RF, trainX, trainY, cv=kfold, verbose = 1,scoring=scoring)
     metric.sort()
     metric_all2['gb'] = metric[::-1]
-    print(metric_all)
-    metric_mean = metric_all.mean()
+    print(metric_all2)
+    metric_mean = metric_all2.mean()
     print(metric_mean.sort_values(ascending=False))
     return metric_all2
+
 def voting():
     from sklearn.ensemble import VotingClassifier
     dt = DecisionTreeClassifier(criterion="gini",max_depth=11)
     lr= LogisticRegression(C = 1.0,penalty = 'l2',solver = 'lbfgs')
     svc = SVC(C=1.0, kernel='rbf', gamma='auto')
     lda = LinearDiscriminantAnalysis(solver='lsqr', shrinkage=None, priors=None)
-    clf = VotingClassifier(estimators=[('lr', rf_optimized), ('dt', svc_optimized), ('svm', xgb_optimized)], 
+    clf = VotingClassifier(estimators=[('lr', rf_optimized), ('dt', svc_optimized), ('svm', xgb_optimized)],
                         voting='hard')
     scores = cross_val_score(clf,trainX_all,trainy_all, cv=10, scoring='f1',verbose = 1)
     return scores

@@ -209,8 +209,9 @@ def features():
 ft = features()
 
 output_feature = open(F_PKL, 'wb')
-pickle.dump(ft, output)
-output.close()
+pickle.dump(ft, output_feature)
+output_feature.close()
+
 output_tfidf = open(T_PKL, 'wb')
-pickle.dump(word2tfidf, output)
-output.close()
+pickle.dump(word2tfidf, output_tfidf)
+output_tfidf.close()
