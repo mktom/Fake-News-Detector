@@ -34,7 +34,7 @@ Install Spacy language module
 - Run the file
 
 ### Classification
-- download `feature.pkl` file and put it in the folder where the `classification.py` is.
+- download `feature_new.pkl` file and put it in the folder where the `classification.py` is.
 - Update `F_H5` value with the value we set above for `O_H5` above
 - Update `F_PKL` value with the value we set above for `F_PKL`
 - Run the file for the classification
