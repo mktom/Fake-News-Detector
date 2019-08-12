@@ -15,7 +15,8 @@ from sklearn.ensemble import GradientBoostingClassifier
 from score import report_score
 from sklearn.linear_model import LogisticRegression
 from xgboost.sklearn import XGBClassifier
-
+from sklearn.metrics import accuracy_score
+import matplotlib.pyplot as plt
 #_____________________
 ##from pandas.plotting import scatter_matrix
 ##import matplotlib.pyplot as plt
@@ -217,7 +218,28 @@ def train_and_test():
     report_score(actual,pred)
     return pred
 pred = train_and_test()
-
+def _cross_entropy_like_loss(model, input_data, targets, num_estimators):
+    loss = np.zeros((num_estimators, 1))
+    for index,pred in enumerate(model.staged_predict(input_data)):
+        loss[index, :] = 1-accuracy_score(targets,pred)
+        #print(f'ce ls {index}:{loss[index, :]}')
+    return loss
+def plot_err_iter():
+    n_estimators = 1000
+    X_train, X_val, Y_train, Y_val = train_test_split(trainX,trainY, test_size=0.3, random_state=10)
+    clf = GradientBoostingClassifier(n_estimators=800,validation_fraction = 0.2,tol = 0.01,learning_rate=0.1,\
+                                     min_samples_split=20,max_features='sqrt',subsample=0.8,random_state=10)
+    clf.fit(X_train, Y_train)
+    tr_loss_ce = _cross_entropy_like_loss(clf, X_train, Y_train, n_estimators)
+    test_loss_ce = _cross_entropy_like_loss(clf, X_val, Y_val, n_estimators)
+    plt.figure()
+    plt.plot(np.arange(n_estimators) + 1, tr_loss_ce, '-r', label='training_loss_ce')
+    plt.plot(np.arange(n_estimators) + 1, test_loss_ce, '-b', label='val_loss_ce')
+    plt.ylabel('Error')
+    plt.xlabel('Iterations')
+    plt.legend(loc='upper right')
+    
+    plt.show()
     
 
 
