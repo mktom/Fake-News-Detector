@@ -161,52 +161,26 @@ def overlap(title, body,word2tfidf):
 ##    simVec2 = np.asarray(res)[:, np.newaxis]
 word2vec = KeyedVectors.load_word2vec_format('GoogleNews-vectors-negative300.bin', binary=True)
 print("word2vec loaded")
-def sentence2vector(sentence, word2vec):
-    vector = np.array([0.0] * 300)
-    count = 0
-    for word in sentence.split():
-        if word in word2vec:
-            vector += word2vec[word]
-            count += 1
-    if count > 0:
-        vector /= count
-        vector /= np.linalg.norm(vector)
-    return vector
+def sentence_similarity(title,sentence):
+    sim = []
+    for t in title.split():
+        for s in sentence.split():
+            similarity = word2vec.similarity(t,s)
+            sim.append(similarity)
+    avg_sim = sum(sim)/len(sim)
+    return avg_sim
 #sentence2vector("its a nice day", word2vec)
 #file = "test_bodies.csv"
 bs = load_body_sentence()
 def hb_similarities(title, body_sentences, word2vec,word2tfidf):
     max_overlap, max_overlap_cnt = 0, 0
     title_vector = sentence2vector(title, word2vec)
-    max_sim = -1
-    best_vector = np.array([0.0] * 300)
-    supports = []
+    support = []
     for sub_body in body_sentences:
-        sub_body_vector = sentence2vector(sub_body, word2vec)
-        useless1,cur_overlap,useless2,cur_overlap_cnt = overlap(title, sub_body,word2tfidf)
-        max_overlap = max(max_overlap, cur_overlap)
-        max_overlap_cnt = max(max_overlap_cnt, cur_overlap_cnt)
-        similarity = 0
-        all_cos = []
-        # for i in xrange(300):
-        for i in range(300):
-            similarity += title_vector[i] * sub_body_vector[i]
-        if similarity > max_sim:
-            max_sim = similarity
-            best_vector = sub_body_vector
-        if (np.linalg.norm(sub_body_vector)* np.linalg.norm(title_vector)) != 0:
-            cos = np.dot(sub_body_vector, title_vector) / (np.linalg.norm(sub_body_vector) \
-                                                       * np.linalg.norm(title_vector))
-        else:
-            cos = 0
-        all_cos.append(cos)
-        supports.append(similarity)
-    avg_cos = sum(all_cos)/len(all_cos)    
+        similarity = sentence_similarity(title,sub_body)
+        support.append(similarity)
+    avg_cos = sum(support)/len(support)    
     features = [max_overlap, max_overlap_cnt, max(supports), min(supports),avg_cos]
-    for v in best_vector:
-        features.append(v)
-    for v in title_vector:
-        features.append(v)
     return features
 word2tfidf = tfidf()
 print("word2tfidf generated")
