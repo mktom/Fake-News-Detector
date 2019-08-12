@@ -246,7 +246,7 @@ def train_and_test():
     stage2 = result[result['binary']==1].index.tolist()
     testX = []
     for i in stage2:
-        textX.append(testX_all[i])
+        testX.append(testX_all[i])
     gb = GradientBoostingClassifier(n_estimators=1000, learning_rate=0.1,min_samples_split=300,max_features='sqrt',subsample=0.8,random_state=10)
     gb.fit(trainX,trainY)
     y_pred = list(gb.predict(testX))
