@@ -165,22 +165,26 @@ def sentence_similarity(title,sentence):
     sim = []
     for t in title.split():
         for s in sentence.split():
-            similarity = word2vec.similarity(t,s)
-            sim.append(similarity)
-    avg_sim = sum(sim)/len(sim)
-    return avg_sim
+            if t in word2vec and s in word2vec:
+                similarity = word2vec.similarity(t,s)
+                sim.append(similarity)
+    if len(sim) == 0:
+        return False
+    else:
+        return sum(sim)/len(sim)
 #sentence2vector("its a nice day", word2vec)
 #file = "test_bodies.csv"
 bs = load_body_sentence()
+print("sentence of body generated")
 def hb_similarities(title, body_sentences, word2vec,word2tfidf):
     max_overlap, max_overlap_cnt = 0, 0
-    title_vector = sentence2vector(title, word2vec)
     support = []
     for sub_body in body_sentences:
         similarity = sentence_similarity(title,sub_body)
-        support.append(similarity)
+        if similarity:
+            support.append(similarity)
     avg_cos = sum(support)/len(support)    
-    features = [max_overlap, max_overlap_cnt, max(supports), min(supports),avg_cos]
+    features = [max_overlap, max_overlap_cnt, max(support), min(support),avg_cos]
     return features
 word2tfidf = tfidf()
 print("word2tfidf generated")
