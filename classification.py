@@ -27,9 +27,6 @@ from sklearn.naive_bayes import GaussianNB
 ##from sklearn.metrics import confusion_matrix
 from sklearn.linear_model import LogisticRegression
 
-##from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
-##from sklearn.preprocessing import normalize
-##from sklearn.metrics.pairwise import cosine_similarity
 # _____________________
 
 TRAIN_H5 = "prs_trn_2.h5"
@@ -152,8 +149,7 @@ def binary():
 def triple():
     metric_all2 = pd.DataFrame()
     scoring = 'accuracy'
-    from sklearn.model_selection import KFold
-    kfold = KFold(n_splits=10, random_state=0)
+    kfold = 10
     
     dt = DecisionTreeClassifier(criterion="gini",max_depth=12)
     metric = cross_val_score(dt, trainX, trainY, cv=kfold, verbose = 1,scoring=scoring)
