@@ -127,7 +127,7 @@ def binary():
     from sklearn.ensemble import GradientBoostingClassifier
     gb = GradientBoostingClassifier(n_estimators=500, validation_fraction=0.2, tol=0.01, learning_rate=0.1, \
                                     min_samples_split=20, max_features='sqrt', subsample=0.8, random_state=10)
-    metric = cross_val_score(lda, trainX_all, trainy_all, cv=10, scoring='f1', verbose=1)
+    metric = cross_val_score(gb, trainX_all, trainy_all, cv=10, scoring='f1', verbose=1)
     # [Parallel(n_jobs=1)]: Using backend SequentialBackend with 1 concurrent workers.
     # [Parallel(n_jobs=1)]: Done  10 out of  10 | elapsed:   39.8s finished
     # metric.sort()
