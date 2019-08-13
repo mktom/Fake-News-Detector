@@ -154,40 +154,30 @@ def triple():
     scoring = 'accuracy'
     from sklearn.model_selection import KFold
     kfold = KFold(n_splits=10, random_state=0)
-    lr = LogisticRegression(C=1.0, penalty='l2', solver='lbfgs')
-    metric = cross_val_score(lr, trainX, trainY, cv=kfold, scoring=scoring)
-    metric.sort()
-    metric_all2['glm'] = metric[::-1]
-    dt = DecisionTreeClassifier(criterion="entropy", max_depth=12)
-    metric = cross_val_score(dt, trainX, trainY, cv=kfold, verbose=1, scoring=scoring)
-    metric.sort()
-    metric_all2['dt'] = metric[::-1]
-    svc = SVC(C=1.0, kernel='rbf', gamma='auto')
-    X_train1, X_test1, y_train1, y_test1 = train_test_split(trainX, trainY, test_size=0.5, random_state=0)
-    metric = cross_val_score(svc, X_train1, y_train1, cv=kfold, verbose=1, scoring=scoring)
-    metric.sort()
-    metric_all2['svm'] = metric[::-1]
+    
+    dt = DecisionTreeClassifier(criterion="gini",max_depth=12)
+    metric = cross_val_score(dt, trainX, trainY, cv=kfold, verbose = 1,scoring=scoring)
+    #metric.sort()
+    metric_all2['DecisionTree'] = metric[::-1]
+    
     gnb = GaussianNB()
-    metric = cross_val_score(gnb, trainX, trainY, cv=kfold, verbose=1, scoring=scoring)
-    metric.sort()
-    metric_all2['gnb'] = metric[::-1]
+    metric = cross_val_score(gnb, trainX, trainY, cv=kfold, verbose = 1,scoring=scoring)
+    metric_all2['GaussianNB'] = metric[::-1]
+    
     lda = LinearDiscriminantAnalysis(solver='lsqr', shrinkage=None, priors=None)
-    metric = cross_val_score(lda, trainX, trainY, cv=kfold, verbose=1, scoring=scoring)
-    metric.sort()
+    metric = cross_val_score(lda, trainX, trainY, cv=kfold, verbose = 1,scoring=scoring)
+    #metric.sort()
     metric_all2['LDA'] = metric[::-1]
-    RF = RandomForestClassifier(n_estimators=100, criterion='gini', random_state=0)
-    metric = cross_val_score(RF, trainX, trainY, cv=kfold, verbose=1, scoring=scoring)
+    
+    gb = GradientBoostingClassifier(n_estimators=500,validation_fraction = 0.2,tol = 0.01,learning_rate=0.1,\
+                                     min_samples_split=20,max_features='sqrt',subsample=0.8,random_state=10)
+    metric = cross_val_score(RF, trainX, trainY, cv=kfold, verbose = 1,scoring=scoring)
     metric.sort()
-    metric_all2['RF100'] = metric[::-1]
-    gb = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0, max_depth=1, random_state=0)
-    metric = cross_val_score(RF, trainX, trainY, cv=kfold, verbose=1, scoring=scoring)
-    metric.sort()
-    metric_all2['gb'] = metric[::-1]
+    metric_all2['GradientBoosting'] = metric[::-1]
     print(metric_all2)
     metric_mean = metric_all2.mean()
     print(metric_mean.sort_values(ascending=False))
     return metric_all2
-
 
 def voting():
     from sklearn.ensemble import VotingClassifier
@@ -200,15 +190,6 @@ def voting():
     scores = cross_val_score(clf, trainX_all, trainy_all, cv=10, scoring='f1', verbose=1)
     return scores
 
-
-# def bi_percep():
-#     ppn = Perceptron(eta0=0.1, random_state=0)
-#     ppn.fit(X_train, y_train)
-#     y_pred = ppn.predict(X_test)
-#     acc1 = accuracy_score(y_test, y_pred)
-#     print(acc1)
-#     return ppn
-# 0.9806563500533618
 
 def _cross_entropy_like_loss(model, input_data, targets, num_estimators):
     loss = np.zeros((num_estimators, 1))
