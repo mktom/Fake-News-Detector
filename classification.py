@@ -156,6 +156,7 @@ def triple():
     metric = cross_val_score(dt, trainX, trainY, cv=kfold, verbose = 1,scoring=scoring)
     metric.sort()
     metric_all2['dt'] = metric[::-1]
+    svc = SVC(C=1.0, kernel='rbf', gamma='auto')
     X_train1, X_test1, y_train1, y_test1 = train_test_split(trainX,trainY, test_size = 0.5, random_state = 0)
     metric = cross_val_score(svc, X_train1, y_train1, cv=kfold, verbose = 1,scoring=scoring)
     metric.sort()
@@ -187,7 +188,7 @@ def voting():
     lr= LogisticRegression(C = 1.0,penalty = 'l2',solver = 'lbfgs')
     svc = SVC(C=1.0, kernel='rbf', gamma='auto')
     lda = LinearDiscriminantAnalysis(solver='lsqr', shrinkage=None, priors=None)
-    clf = VotingClassifier(estimators=[('lr', rf_optimized), ('dt', svc_optimized), ('svm', xgb_optimized)],
+    clf = VotingClassifier(estimators=[('lr', lr), ('dt', dt), ('svm', svm)],
                         voting='hard')
     scores = cross_val_score(clf,trainX_all,trainy_all, cv=10, scoring='f1',verbose = 1)
     return scores
