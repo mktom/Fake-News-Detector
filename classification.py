@@ -167,7 +167,7 @@ def triple():
     
     gb = GradientBoostingClassifier(n_estimators=500,validation_fraction = 0.2,tol = 0.01,learning_rate=0.1,\
                                      min_samples_split=20,max_features='sqrt',subsample=0.8,random_state=10)
-    metric = cross_val_score(RF, trainX, trainY, cv=kfold, verbose = 1,scoring=scoring)
+    metric = cross_val_score(gb, trainX, trainY, cv=kfold, verbose = 1,scoring=scoring)
     metric.sort()
     metric_all2['GradientBoosting'] = metric[::-1]
     print(metric_all2)
